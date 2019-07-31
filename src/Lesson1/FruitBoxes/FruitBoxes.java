@@ -9,8 +9,8 @@ public class FruitBoxes {
         Fruit apple = new Apple();
         Fruit orange = new Orange();
 
-        System.out.println("Коробка яблок");
         BoxWithFruits<Fruit>[] boxes = new BoxWithFruits[CNT_BOXES];
+        System.out.println("Коробка яблок");
         for (int i = 0; i < boxes.length; i++) boxes[i] = new BoxWithFruits<>();
         boxes[0].boxInfo();
         boxes[0].addFruit(apple);
@@ -36,6 +36,36 @@ public class FruitBoxes {
         boxes[1].boxInfo();
         boxes[2].boxInfo();
 
+        //2-е решение
+        BoxWithFruits<Apple> boxes0 = new BoxWithFruits(apple);
+        BoxWithFruits<Orange> boxes1 = new BoxWithFruits(orange);
+        BoxWithFruits<Orange> boxes2 = new BoxWithFruits(orange);
+
+        System.out.println("Коробка яблок");
+        boxes0.boxInfo();
+        boxes0.addFruit(apple);
+        boxes0.addFruit(apple);
+        boxes0.addFruit(orange);
+        boxes0.boxInfo();
+
+        System.out.println("Коробка апельсинов");
+        boxes1.boxInfo();
+        boxes1.addFruit(orange);
+        boxes1.addFruit(orange);
+        boxes1.addFruit(orange);
+        boxes1.addFruit(apple);
+        boxes1.addFruit(apple);
+        boxes1.boxInfo();
+        //не работает на уровне компиляции
+//        boxes1.replaceTo(boxes0, orange);
+
+        System.out.println("Коробка апельсинов 2 пересыпаем из 1-й");
+        boxes2.addFruit(orange);
+        boxes2.addFruit(orange);
+        boxes2.boxInfo();
+        boxes1.replaceTo(boxes2, orange);
+        boxes1.boxInfo();
+        boxes2.boxInfo();
         System.out.println("Ok");
     }
 }

@@ -5,20 +5,23 @@ import Lesson1.FruitBoxes.fruits.Fruit;
 public class BoxWithFruits<T extends Fruit> {
     final private int maxWeight = 100;
     private int weight;
+    private Class<? extends Fruit> classFruit;
+
+    public BoxWithFruits() {
+        weight = 0;
+        classFruit = null;
+    }
+
+    public BoxWithFruits(T fruit) {
+        this.classFruit = fruit.getClass();
+    }
 
     public Class<? extends Fruit> getClassFruit() {
         return classFruit;
     }
 
-    private Class<? extends Fruit> classFruit;
-
     public int getWeight() {
         return weight;
-    }
-
-    public BoxWithFruits() {
-        weight = 0;
-        classFruit = null;
     }
 
     public void boxInfo() {
@@ -28,7 +31,7 @@ public class BoxWithFruits<T extends Fruit> {
             System.out.println("Коробка пуста");
     }
 
-    public boolean addFruit(T fruit) {
+    public boolean addFruit(Fruit fruit) {
         if (classFruit == null)
             classFruit = fruit.getClass();
         if (classFruit == fruit.getClass()) {
@@ -42,7 +45,7 @@ public class BoxWithFruits<T extends Fruit> {
         return false;
     }
 
-    public boolean removeFruit(T fruit) {
+    public boolean removeFruit(Fruit fruit) {
         if (classFruit == fruit.getClass()) {
             if (weight - fruit.getWeight() >= 0) {
                 weight -= fruit.getWeight();
@@ -54,14 +57,14 @@ public class BoxWithFruits<T extends Fruit> {
         return false;
     }
 
-    public void replaceTo(BoxWithFruits<T> b2, T fruit) {
-        if (compareByType(b2))
+    public void replaceTo(BoxWithFruits<T> b2, Fruit fruit) {
+        if (compareByType(b2)) {
             while (b2.addFruit(fruit))
                 if (!removeFruit(fruit)) {
                     b2.removeFruit(fruit);
                     break;
                 }
-        else
+        } else
             System.out.println("Разные фрукты");
     }
 
