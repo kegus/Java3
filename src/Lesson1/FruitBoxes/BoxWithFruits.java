@@ -55,11 +55,13 @@ public class BoxWithFruits<T extends Fruit> {
     }
 
     public void replaceTo(BoxWithFruits<T> b2, T fruit) {
-        if (compareByType(b2)) {
-            while (b2.addFruit(fruit)) {
-                if (!removeFruit(fruit)) break;
-            }
-        } else
+        if (compareByType(b2))
+            while (b2.addFruit(fruit))
+                if (!removeFruit(fruit)) {
+                    b2.removeFruit(fruit);
+                    break;
+                }
+        else
             System.out.println("Разные фрукты");
     }
 
@@ -74,7 +76,7 @@ public class BoxWithFruits<T extends Fruit> {
     }
 
     public boolean compareByTypeAndWeight(BoxWithFruits<?> b2) { // типы должны совпадать
-        if(getWeight() == b2.getWeight()) return true;
+        if(compareByType(b2) && compareByWeight(b2)) return true;
         return false;
     }
 }
