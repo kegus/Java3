@@ -11,7 +11,8 @@ public class Program2 {
 
     public static void main(String[] args) {
         try {
-            Class.forName("org.postgresql.Driver");
+            //Class.forName("org.postgresql.Driver");
+            Class.forName("org.sqlite.JDBC");
         } catch (Exception e) {
             e.printStackTrace();
         }

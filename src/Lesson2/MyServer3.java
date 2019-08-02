@@ -1,4 +1,4 @@
-package Lesson8;
+package Lesson2;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MyServer2 {
+public class MyServer3 {
     public static void main(String[] args) {
         new Server();
         System.out.println("Ok");
