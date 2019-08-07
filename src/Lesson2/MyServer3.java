@@ -18,6 +18,7 @@ public class MyServer3 {
 
 class Server {
     //Database
+    static final boolean USE_DB = true;
     static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test";
     static final String USER = "postgres";
     static final String PASS = "admin";
@@ -37,6 +38,7 @@ class Server {
         nicksLst = new CopyOnWriteArrayList<>();
 
         try {
+            if (USE_DB)
             try {
                 Class.forName("org.postgresql.Driver");
                 connection = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -44,8 +46,8 @@ class Server {
 //                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
-            if (connection != null) {
-                authService.start(nicksLst, connection);
+            if (connection != null || !USE_DB) {
+                authService.start(nicksLst, connection, USE_DB);
                 serverSocket = new ServerSocket(PORT);
                 System.out.println("Сервер запущен!");
                 while (true) {
