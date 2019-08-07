@@ -1,10 +1,13 @@
 package Lesson2;
 
+import java.sql.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MyServer3 {
     public static void main(String[] args) {
@@ -14,6 +17,13 @@ public class MyServer3 {
 }
 
 class Server {
+    //Database
+    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test";
+    static final String USER = "postgres";
+    static final String PASS = "admin";
+    private Connection connection;
+
+    //Server
     private final int PORT = 8189;
     private AuthService authService;
     private List<ClientHandler> peers;
@@ -27,20 +37,36 @@ class Server {
         nicksLst = new CopyOnWriteArrayList<>();
 
         try {
-            authService.start(nicksLst);
-            serverSocket = new ServerSocket(PORT);
-            System.out.println("Сервер запущен!");
-            while (true) {
-                socket = serverSocket.accept();
-                System.out.println("Клиент подключился!");
-                new ClientHandler(this, socket, authService);
+            try {
+                Class.forName("org.postgresql.Driver");
+                connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            } catch (Exception ex) {
+//                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
-        } catch (IOException e) {
+            if (connection != null) {
+                authService.start(nicksLst, connection);
+                serverSocket = new ServerSocket(PORT);
+                System.out.println("Сервер запущен!");
+                while (true) {
+                    socket = serverSocket.accept();
+                    System.out.println("Клиент подключился!");
+                    new ClientHandler(this, socket, authService);
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
+                }
+            }
             try {
-                socket.close();
-                serverSocket.close();
+                if (connection != null) socket.close();
+                if (serverSocket != null) serverSocket.close();
             } catch (IOException e) {
                 //e.printStackTrace();
             }
