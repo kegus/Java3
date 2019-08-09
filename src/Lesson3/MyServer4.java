@@ -1,7 +1,7 @@
 package Lesson3;
 
+import java.io.*;
 import java.sql.*;
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
@@ -18,10 +18,10 @@ public class MyServer4 {
 
 class Server {
     //Database
-    static final boolean USE_DB = false;
-    static final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test";
-    static final String USER = "postgres";
-    static final String PASS = "admin";
+    private final boolean USE_DB = false;
+    private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test";
+    private final String USER = "postgres";
+    private final String PASS = "admin";
     private Connection connection;
 
     //Server
@@ -36,16 +36,15 @@ class Server {
         authService = new AuthService();
         peers = new CopyOnWriteArrayList<>();
         nicksLst = new CopyOnWriteArrayList<>();
-
         try {
             if (USE_DB)
-            try {
-                Class.forName("org.postgresql.Driver");
-                connection = DriverManager.getConnection(DB_URL, USER, PASS);
-            } catch (Exception ex) {
+                try {
+                    Class.forName("org.postgresql.Driver");
+                    connection = DriverManager.getConnection(DB_URL, USER, PASS);
+                } catch (Exception ex) {
 //                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
-            }
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
+                }
             if (connection != null || !USE_DB) {
                 authService.start(nicksLst, connection, USE_DB);
                 serverSocket = new ServerSocket(PORT);
@@ -74,6 +73,7 @@ class Server {
             }
             authService.stop();
         }
+
     }
 
     public void sendListTo(String nick) {
@@ -105,8 +105,7 @@ class Server {
     void broadcast(String nick, String msg) {
         if (nick != null)
         for (ClientHandler clientHandler : peers) {
-            //if (!clientHandler.getNick().equals(nick))
-                clientHandler.sendMsg(msg);
+            clientHandler.sendMsg(msg);
         }
         broadcastList();
     }

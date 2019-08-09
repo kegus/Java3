@@ -4,10 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.*;
+import java.util.List;
+import java.text.SimpleDateFormat;
 
 public class MyClient4 extends JFrame {
     private final String ADDR = "localhost";
@@ -28,10 +29,18 @@ public class MyClient4 extends JFrame {
     private JPanel regPan;
     private JPanel nicksListPan;
 
-    public MyClient4(){
-        drawGUI();
-        openConnect();
+    private static class History implements Serializable {
+        private String logStr;
+
+        public History(String logStr) {
+            this.logStr = logStr;
+        }
+
+        public String getLogStr() {
+            return logStr;
+        }
     }
+    private List<History> logLst = null;
 
     private void openConnect() {
         tLstnr = new Thread(() -> {
@@ -57,12 +66,15 @@ public class MyClient4 extends JFrame {
                         nickName = regNick.getText();
                         regPan.setVisible(false);
                         nick.setText(nickName);
-                        area.insert("You are registered\n", 0);
+                        String str = "You are registered\n";
+                        area.insert(str, 0);
                     } else
                     if (strFromSrv.equalsIgnoreCase("/authOK")) {
                         nickName = nick.getText();
                         topPan.setVisible(false);
-                        area.insert("Server connected\n", 0);
+                        String str = "Server connected\n";
+                        area.insert(str, 0);
+                        loadHistory();
                     } else
                     if (strFromSrv.startsWith("/list")) {
                         String[] tokens = strFromSrv.split(" ");
@@ -74,11 +86,16 @@ public class MyClient4 extends JFrame {
                     if (strFromSrv.equalsIgnoreCase("/end")) {
                         closeConnect();
                         break;
-                    } else
-                        area.insert(strFromSrv + "\n", 0);
+                    } else {
+                        String str = strFromSrv + "\n";
+                        area.insert(str, 0);
+                        writeHistory(str);
+                    }
                 }
             } catch (IOException e) {
-                area.insert("Error reading from server\n", 0);
+                String str = "Error reading from server\n";
+                area.insert(str, 0);
+                writeHistory(str);
                 try {
                     closeConnect();
                     Thread.sleep(1500);
@@ -87,6 +104,43 @@ public class MyClient4 extends JFrame {
             }
         });
         tLstnr.start();
+    }
+
+    private void writeHistory(String msg){
+        if (logLst == null) {
+            logLst = new ArrayList<>();
+        }
+        logLst.add(new History(msg));
+    }
+
+    private void SaveHistory() {
+        if (nickName != null && !nickName.isEmpty())
+        try (ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream("log_"+nickName+".txt"))) {
+            writeHistory("Close\n");
+            objOut.writeObject(logLst);
+        } catch (IOException ee) {
+            ee.printStackTrace();
+        }
+    }
+    private void loadHistory() {
+        if (nickName != null && !nickName.isEmpty() && new File("log_"+nickName+".txt").exists())
+        try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream("log_"+nickName+".txt"))) {
+            logLst = (ArrayList<History>)objIn.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (logLst != null) {
+            StringBuilder strHis = new StringBuilder();
+            int j = 0;
+            for (int i = logLst.size()-1; i >= 0; i--) {
+                strHis.append(logLst.get(i).getLogStr());
+                if (j++ > 100) break;
+            }
+//            for (History hs: logLst) {
+//                strHis.append(hs.getLogStr());
+//            }
+            area.insert(strHis.toString(), 0);
+        }
     }
 
     private void closeConnect(){
@@ -152,6 +206,8 @@ public class MyClient4 extends JFrame {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 try {
+                    SaveHistory();
+
                     if (socket != null && socket.isConnected()) out.writeUTF("/end");
                     //closeConnect();
                 } catch (IOException ex) {
@@ -162,6 +218,12 @@ public class MyClient4 extends JFrame {
 
         setVisible(true);
     }
+
+    public MyClient4(){
+        drawGUI();
+        openConnect();
+    }
+
 
     private void sndRegNick() {
         if (socket != null && socket.isConnected() && !regNick.getText().trim().isEmpty()){
