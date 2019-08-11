@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ClientHandler {
+public class ClientHandler implements Runnable{
     private final int TIME_OUT = 120000;
     private Socket socket;
     private Server server;
@@ -20,6 +20,19 @@ public class ClientHandler {
         return nick;
     }
 
+    @Override
+    public void run() {
+        try {
+            autorization();
+            read();
+        } catch (IOException e) {
+            System.out.println("client read error");
+            //e.printStackTrace();
+        } finally {
+            close();
+        }
+    }
+
     public ClientHandler(Server server, Socket socket, AuthService authService) {
         try {
             this.socket = socket;
@@ -27,7 +40,8 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
             this.authService = authService;
-            new Thread(() -> {
+            //run();
+            /*new Thread(() -> {
                 try {
                     autorization();
                     read();
@@ -37,7 +51,7 @@ public class ClientHandler {
                 } finally {
                     close();
                 }
-            }).start();
+            }).start();*/
             new Thread(() -> {
                 try {
                     Thread.sleep(TIME_OUT);
@@ -100,7 +114,7 @@ public class ClientHandler {
         }
     }
 
-        private void autorization() throws IOException {
+    private void autorization() throws IOException {
         while (true) {
             String str = in.readUTF();
             if (str.startsWith("/reg")) {

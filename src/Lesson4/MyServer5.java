@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,11 +33,13 @@ class Server {
     private List<String> nicksLst;
     private ServerSocket serverSocket = null;
     private Socket socket = null;
+    private ExecutorService execSrv;
 
     Server(){
         authService = new AuthService();
         peers = new CopyOnWriteArrayList<>();
         nicksLst = new CopyOnWriteArrayList<>();
+        execSrv = Executors.newCachedThreadPool();
         try {
             if (USE_DB)
                 try {
@@ -52,7 +56,9 @@ class Server {
                 while (true) {
                     socket = serverSocket.accept();
                     System.out.println("Клиент подключился!");
-                    new ClientHandler(this, socket, authService);
+
+                    execSrv.execute(new ClientHandler(this, socket, authService));
+//                    new Thread(new ClientHandler(this, socket, authService)).start();
                 }
             }
         } catch (Exception e) {
@@ -72,6 +78,7 @@ class Server {
                 //e.printStackTrace();
             }
             authService.stop();
+            execSrv.shutdown();
         }
 
     }
