@@ -9,7 +9,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Program5 {
-    public static final int CARS_COUNT = 4;
+    public static final int CARS_COUNT = 6;
+    public static final boolean PAIRS_TRANZIT = CARS_COUNT % 2 == 0;
     public static Thread[] arrThrds = new Thread[CARS_COUNT];
     public static final CountDownLatch cdlReady = new CountDownLatch(CARS_COUNT);
     public static final CountDownLatch cdlStart = new CountDownLatch(CARS_COUNT);
@@ -26,7 +27,7 @@ public class Program5 {
         Race race = new Race(new Road(60, false), new Tunnel(false), new Road(40, true));
         Car[] cars = new Car[CARS_COUNT];
         for (int i = 0; i < cars.length; i++) {
-            cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
+            cars[i] = new Car(race, 20 + (int) (Math.random() * 30));
         }
         for (int i = 0; i < cars.length; i++) {
             arrThrds[i] = new Thread(cars[i]);
@@ -147,7 +148,7 @@ public class Program5 {
             try {
                 try {
                     System.out.println(c.getName() + " готовится к этапу(ждет): " + description);
-                    cbTonnel.await();
+                    if (PAIRS_TRANZIT) cbTonnel.await();
                     smpTonnel.acquire();
                     System.out.println(c.getName() + " начал этап: " + description);
                     Thread.sleep(length / c.getSpeed() * 1000);
