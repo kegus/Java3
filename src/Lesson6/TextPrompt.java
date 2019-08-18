@@ -1,4 +1,4 @@
-package Lesson4;
+package Lesson6;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

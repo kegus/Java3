@@ -1,4 +1,4 @@
-package Lesson4;
+package Lesson6;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.List;
 
-public class MyClient5 extends JFrame {
+public class MyClient6 extends JFrame {
     private final String ADDR = "localhost";
     private final int PORT = 8189;
     private Socket socket;
@@ -218,7 +218,7 @@ public class MyClient5 extends JFrame {
         setVisible(true);
     }
 
-    public MyClient5(){
+    public MyClient6(){
         drawGUI();
         openConnect();
     }
@@ -266,6 +266,6 @@ public class MyClient5 extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MyClient5::new);
+        SwingUtilities.invokeLater(MyClient6::new);
     }
 }

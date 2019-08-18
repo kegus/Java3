@@ -1,4 +1,4 @@
-package Lesson4;
+package Lesson6;
 
 import java.io.*;
 import java.sql.*;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MyServer5 {
+public class MyServer6 {
     public static void main(String[] args) {
         new Server();
         System.out.println("Ok");
