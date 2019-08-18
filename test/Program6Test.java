@@ -15,17 +15,6 @@ public class Program6Test {
 
     private int[] checkArr;
 
-    @BeforeClass
-    public static void init() {
-        System.out.println("init tests ...");
-        test = new Program6();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        test = null;
-    }
-
     public Program6Test(int[] checkArr) {
         this.checkArr = checkArr;
     }
@@ -44,4 +33,16 @@ public class Program6Test {
     public void checkArr1_4() {
         Assert.assertEquals(test.checkArr1_4(checkArr), false);
     }
+
+    @BeforeClass
+    public static void init() {
+        System.out.println("init tests ...");
+        test = new Program6();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        test = null;
+    }
+
 }
