@@ -12,12 +12,12 @@ public class Program6 {
 
     public boolean checkArr1_4(int[] arr){
         boolean res = false;
+        int cnt1 = 0;
+        int cnt4 = 0;
         for (int i: arr) {
-            if(i == 1 || i == 4) {
-                res = true;
-                break;
-            }
+            if(i == 1) cnt1++;
+            if(i == 4) cnt4++;
         }
-        return res;
+        return cnt1 == cnt4;
     }
 }

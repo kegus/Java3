@@ -22,8 +22,8 @@ public class Program6Test {
     public static Collection abracadabra() {
         return Arrays.asList(new Object[][]{
                         {new int[]{5, 5, 1, 5, 8, 4}, true},
-                        {new int[]{50, 2, 6, 5}, false},
-                        {new int[]{15, 23, 56, 134, 50}, false}
+                        {new int[]{50, 2, 6, 5, 1}, false},
+                        {new int[]{15, 23, 56, 4, 50}, false}
                 }
         );
     }
