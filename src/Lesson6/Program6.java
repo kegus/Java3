@@ -11,6 +11,13 @@ public class Program6 {
     }
 
     public boolean checkArr1_4(int[] arr){
-        return false;
+        boolean res = false;
+        for (int i: arr) {
+            if(i == 1 || i == 4) {
+                res = true;
+                break;
+            }
+        }
+        return res;
     }
 }
