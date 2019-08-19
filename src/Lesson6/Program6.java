@@ -1,17 +1,36 @@
 package Lesson6;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Program6 {
     public static void main(String[] args) {
 
         System.out.println("Ok");
     }
 
-    private int[] getArrAfterLast4(int[] arr){
-        return arr;
+    public Integer[] getArrAfterLast4(int[] arr) throws RuntimeException {
+        Integer[] res;
+        List<Integer> resList = new ArrayList<>();
+        boolean found4 = false;
+        for (int i = arr.length-1; i >= 0; i--) {
+            if (arr[i] == 4) {
+                found4 = true;
+                for (int j = i; j < arr.length; j++) {
+                    resList.add(arr[j]);
+                }
+            }
+        }
+        if (found4) {
+            res = new Integer[resList.size()];
+            resList.toArray(res);
+            return res;
+        } else
+            throw new RuntimeException();
+
     }
 
     public boolean checkArr1_4(int[] arr){
-        boolean res = false;
         int cnt1 = 0;
         int cnt4 = 0;
         for (int i: arr) {

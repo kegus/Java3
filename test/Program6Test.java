@@ -11,6 +11,7 @@ public class Program6Test {
     private static Program6 test = null;
 
     private static int[] checkArr;
+    private static int[] resArr;
     private static boolean res;
 
     public Program6Test(int[] checkArr, boolean res) {
@@ -33,6 +34,11 @@ public class Program6Test {
         Assert.assertEquals(test.checkArr1_4(checkArr), res);
     }
 
+    @Test(expected = RuntimeException.class)
+    public void getArrAfterLast4() {
+        test.getArrAfterLast4(checkArr);
+    }
+
     @Before
     public void start() {
         System.out.println("init tests ...");
@@ -42,6 +48,7 @@ public class Program6Test {
     @After
     public void fiish() throws Exception {
         checkArr = null;
+        resArr = null;
         test = null;
     }
 
