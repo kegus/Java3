@@ -115,15 +115,15 @@ class Server {
         String newStr;
         String resMsg = msg;
         for (int i = 0; i < checkWords.size(); i++) {
-            /*str = "(?i)"+checkWords.get(i);
+            str = "(?i)"+checkWords.get(i);
             newStr = replaceWords.get(i);
-            resMsg = Pattern.compile(str, Pattern.UNICODE_CASE).matcher(str).replaceAll(newStr);
-            //resMsg = msg.replaceAll(str, newStr);*/
-            str = checkWords.get(i);
+            resMsg = Pattern.compile(str, Pattern.UNICODE_CASE).matcher(resMsg).replaceAll(newStr);
+            //resMsg = msg.replaceAll(str, newStr);
+            /*str = checkWords.get(i);
             newStr = replaceWords.get(i);
             if (resMsg.contains(str)) {
                 resMsg = resMsg.replaceAll(str, newStr);
-            }
+            }*/
         }
         return resMsg;
     }

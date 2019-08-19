@@ -2,10 +2,15 @@ package Lesson6;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Program6 {
     public static void main(String[] args) {
-
+        /*String source = "ПУТин";
+        String str = "(?i)путин";
+        String newStr = "молодец";
+        String resMsg = Pattern.compile(str, Pattern.UNICODE_CASE).matcher(source).replaceAll(newStr);
+        System.out.println(resMsg);*/
         System.out.println("Ok");
     }
 
