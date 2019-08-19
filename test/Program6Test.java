@@ -11,7 +11,6 @@ public class Program6Test {
     private static Program6 test = null;
 
     private static int[] checkArr;
-    private static int[] resArr;
     private static boolean res;
 
     public Program6Test(int[] checkArr, boolean res) {
@@ -48,7 +47,6 @@ public class Program6Test {
     @After
     public void fiish() throws Exception {
         checkArr = null;
-        resArr = null;
         test = null;
     }
 

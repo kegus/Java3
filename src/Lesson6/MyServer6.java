@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class MyServer6 {
     public static void main(String[] args) {
@@ -19,6 +18,10 @@ public class MyServer6 {
 }
 
 class Server {
+    //Logger
+    private static final Logger logger = Logger.getLogger(MyServer6.class.getName());
+    private static final String logFileName = "server.log";
+
     //Database
     private final boolean USE_DB = false;
     private final String DB_URL = "jdbc:postgresql://127.0.0.1:5432/test";
@@ -35,7 +38,16 @@ class Server {
     private Socket socket = null;
     private ExecutorService execSrv;
 
-    Server(){
+    Server() {
+        try {
+            Handler h = new FileHandler(logFileName);
+            h.setFormatter(new SimpleFormatter());
+            logger.addHandler(h);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.log(Level.SEVERE, "logger started...");
+
         authService = new AuthService();
         peers = new CopyOnWriteArrayList<>();
         nicksLst = new CopyOnWriteArrayList<>();
@@ -46,36 +58,38 @@ class Server {
                     Class.forName("org.postgresql.Driver");
                     connection = DriverManager.getConnection(DB_URL, USER, PASS);
                 } catch (Exception ex) {
-//                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
+                    logger.log(Level.WARNING, "Error connect to DB", ex);
                 }
             if (connection != null || !USE_DB) {
                 authService.start(nicksLst, connection, USE_DB);
                 serverSocket = new ServerSocket(PORT);
-                System.out.println("Сервер запущен!");
+                //System.out.println("Сервер запущен!");
+                logger.log(Level.SEVERE, "Server started...");
                 while (true) {
                     socket = serverSocket.accept();
-                    System.out.println("Клиент подключился!");
+                    logger.log(Level.SEVERE, "Client connected");
+                    //System.out.println("Клиент подключился!");
 
-                    execSrv.execute(new ClientHandler(this, socket, authService));
+                    execSrv.execute(new ClientHandler(this, socket, authService, logger));
 //                    new Thread(new ClientHandler(this, socket, authService)).start();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Error starting server", e);
+            //e.printStackTrace();
         } finally {
             if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
+                    logger.log(Level.WARNING, "Error close connection to DB", ex);
                 }
             }
             try {
                 if (connection != null) socket.close();
                 if (serverSocket != null) serverSocket.close();
             } catch (IOException e) {
-                //e.printStackTrace();
+                logger.log(Level.WARNING, "Error close serverSocket", e);
             }
             authService.stop();
             execSrv.shutdown();

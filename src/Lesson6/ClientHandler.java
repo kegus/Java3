@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientHandler implements Runnable{
     private final int TIME_OUT = 120000;
@@ -13,6 +15,7 @@ public class ClientHandler implements Runnable{
     private DataOutputStream out;
     private DataInputStream in;
     private boolean autorized = false;
+    private Logger logger;
 
     private String nick = null;
 
@@ -26,20 +29,22 @@ public class ClientHandler implements Runnable{
             autorization();
             read();
         } catch (IOException e) {
-            System.out.println("client read error");
+            //System.out.println("client read error");
+            logger.log(Level.WARNING, "client read error", e);
             //e.printStackTrace();
         } finally {
             close();
         }
     }
 
-    public ClientHandler(Server server, Socket socket, AuthService authService) {
+    public ClientHandler(Server server, Socket socket, AuthService authService, Logger logger) {
         try {
             this.socket = socket;
             this.server = server;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
             this.authService = authService;
+            this.logger = logger;
             //run();
             /*new Thread(() -> {
                 try {
@@ -57,7 +62,8 @@ public class ClientHandler implements Runnable{
                     Thread.sleep(TIME_OUT);
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
-                    System.out.println("sleep error");
+                    //System.out.println("sleep error");
+                    logger.log(Level.WARNING, "sleep error", e);
                 } finally {
                     if (!isAutorized()) close();
                 }
@@ -138,7 +144,8 @@ public class ClientHandler implements Runnable{
                     sendMsg("Ник не найден");
                 }
             } else {
-                System.out.println("получено: "+str);
+                //System.out.println("получено: "+str);
+                logger.log(Level.INFO, "recieved: "+str);
             }
         }
     }
