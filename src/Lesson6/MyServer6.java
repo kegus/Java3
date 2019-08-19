@@ -4,14 +4,16 @@ import java.io.*;
 import java.sql.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.*;
+import java.util.regex.Pattern;
 
 public class MyServer6 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new Server();
         System.out.println("Ok");
     }
@@ -21,6 +23,10 @@ class Server {
     //Logger
     private static final Logger logger = Logger.getLogger(MyServer6.class.getName());
     private static final String logFileName = "server.log";
+
+    //Replacements
+    public List<String> checkWords = new ArrayList<>();
+    public List<String> replaceWords = new ArrayList<>();
 
     //Database
     private final boolean USE_DB = false;
@@ -38,15 +44,22 @@ class Server {
     private Socket socket = null;
     private ExecutorService execSrv;
 
-    Server() {
-        try {
-            Handler h = new FileHandler(logFileName);
-            h.setFormatter(new SimpleFormatter());
-            logger.addHandler(h);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    Server() throws IOException {
+        Handler h = new FileHandler(logFileName);
+        h.setFormatter(new SimpleFormatter());
+        logger.addHandler(h);
+
         logger.log(Level.SEVERE, "logger started...");
+
+        checkWords.add("Путин лох");
+        checkWords.add("Путин чмо");
+        checkWords.add("Порошенко бог");
+        checkWords.add("Порошенко молодец");
+
+        replaceWords.add("Путин бог");
+        replaceWords.add("Путин молодец");
+        replaceWords.add("парашенка и зиленский лохи");
+        replaceWords.add("парашенка и зиленский чмо");
 
         authService = new AuthService();
         peers = new CopyOnWriteArrayList<>();
@@ -97,6 +110,23 @@ class Server {
 
     }
 
+    private String checkMsg(String msg) {
+        String str;
+        String newStr;
+        String resMsg = msg;
+        for (int i = 0; i < checkWords.size(); i++) {
+            /*str = "(?i)"+checkWords.get(i);
+            newStr = replaceWords.get(i);
+            resMsg = Pattern.compile(str, Pattern.UNICODE_CASE).matcher(str).replaceAll(newStr);
+            //resMsg = msg.replaceAll(str, newStr);*/
+            str = checkWords.get(i);
+            newStr = replaceWords.get(i);
+            if (resMsg.contains(str)) {
+                resMsg = resMsg.replaceAll(str, newStr);
+            }
+        }
+        return resMsg;
+    }
     public void sendListTo(String nick) {
         StringBuffer lst = new StringBuffer("/list ");
         for (ClientHandler clientHandler : peers) {
@@ -108,6 +138,7 @@ class Server {
     }
 
     void sendMsgTo(String nick, String msg) {
+        msg = checkMsg(msg);
         for (ClientHandler clientHandler : peers) {
             if (clientHandler.getNick().equals(nick)) {
                 clientHandler.sendMsg(msg);
@@ -124,6 +155,7 @@ class Server {
     }
 
     void broadcast(String nick, String msg) {
+        msg = checkMsg(msg);
         if (nick != null)
         for (ClientHandler clientHandler : peers) {
             clientHandler.sendMsg(msg);

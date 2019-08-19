@@ -45,18 +45,6 @@ public class ClientHandler implements Runnable{
             this.out = new DataOutputStream(socket.getOutputStream());
             this.authService = authService;
             this.logger = logger;
-            //run();
-            /*new Thread(() -> {
-                try {
-                    autorization();
-                    read();
-                } catch (IOException e) {
-                    System.out.println("client read error");
-                    //e.printStackTrace();
-                } finally {
-                    close();
-                }
-            }).start();*/
             new Thread(() -> {
                 try {
                     Thread.sleep(TIME_OUT);
