@@ -48,19 +48,8 @@ class Server {
         Handler h = new FileHandler(logFileName);
         h.setFormatter(new SimpleFormatter());
         logger.addHandler(h);
-
         logger.log(Level.SEVERE, "logger started...");
-
-        checkWords.add("Путин лох");
-        checkWords.add("Путин чмо");
-        checkWords.add("Порошенко бог");
-        checkWords.add("Порошенко молодец");
-
-        replaceWords.add("Путин бог");
-        replaceWords.add("Путин молодец");
-        replaceWords.add("парашенка и зиленский лохи");
-        replaceWords.add("парашенка и зиленский чмо");
-
+        fillChkLists();
         authService = new AuthService();
         peers = new CopyOnWriteArrayList<>();
         nicksLst = new CopyOnWriteArrayList<>();
@@ -110,6 +99,17 @@ class Server {
 
     }
 
+    private void fillChkLists() {
+        checkWords.add("Путин лох");
+        checkWords.add("Путин чмо");
+        checkWords.add("Порошенко бог");
+        checkWords.add("Порошенко молодец");
+
+        replaceWords.add("Путин бог");
+        replaceWords.add("Путин молодец");
+        replaceWords.add("парашенка и зиленский лохи");
+        replaceWords.add("парашенка и зиленский чмо");
+    }
     private String checkMsg(String msg) {
         String str;
         String newStr;
