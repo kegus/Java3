@@ -110,6 +110,7 @@ class Server {
         replaceWords.add("парашенка и зиленский лохи");
         replaceWords.add("парашенка и зиленский чмо");
     }
+
     private String checkMsg(String msg) {
         String str;
         String newStr;
@@ -127,6 +128,7 @@ class Server {
         }
         return resMsg;
     }
+
     public void sendListTo(String nick) {
         StringBuffer lst = new StringBuffer("/list ");
         for (ClientHandler clientHandler : peers) {
@@ -174,5 +176,4 @@ class Server {
         //nicksLst.remove(nick);
         if (nick != null) broadcast(nick,nick+" leave chat");
     }
-
 }
